@@ -1,7 +1,8 @@
-import 'package:my_app/medicament.dart';
-import 'package:my_app/loginsignup.dart';
+import 'package:app/details/details_product.dart';
+import 'package:app/medicament.dart';
+import 'package:app/loginsignup.dart';
 import 'package:flutter/material.dart';
-import 'package:my_app/product.dart';
+import 'package:app/product.dart';
 import 'package:hexcolor/hexcolor.dart';
 
 class HomePage extends StatefulWidget {
@@ -88,6 +89,7 @@ class _HomePageState extends State<HomePage> {
             ),
 
             // ******************* Search bar ***********************//
+
             const SizedBox(
               height: 25,
             ),
@@ -126,9 +128,9 @@ class _HomePageState extends State<HomePage> {
               height: 25,
             ),
             Expanded(
-                child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: GridView.builder(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: GridView.builder(
                   itemCount: products.length,
                   // ignore: prefer_const_constructors
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -138,9 +140,18 @@ class _HomePageState extends State<HomePage> {
                     childAspectRatio: 0.85,
                   ),
                   itemBuilder: (context, index) => ProductCard(
-                        product: products[index],
-                      )),
-            ))
+                    product: products[index],
+                    press: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Details(
+                            product: products[index],
+                          ),
+                        )),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
