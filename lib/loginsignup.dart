@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/services.dart';
-import 'package:my_app/home.dart';
+import 'package:app/home.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:hexcolor/hexcolor.dart';
