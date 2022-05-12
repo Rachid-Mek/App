@@ -1,13 +1,23 @@
 import 'package:app/details/body.dart';
-import 'package:app/medicament.dart';
+import 'package:app/main.dart';
 import 'package:app/shoppingcart.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:app/globals.dart' as global;
 
 class Details extends StatefulWidget {
-  final Product product;
+  final int id, price, Miligramme, Qte;
+  final String image, name;
 
-  const Details({Key? key, required this.product}) : super(key: key);
+  const Details({
+    Key? key,
+    required this.id,
+    required this.Miligramme,
+    required this.name,
+    required this.Qte,
+    required this.price,
+    required this.image,
+  }) : super(key: key);
 
   @override
   State<Details> createState() => _DetailsState();
@@ -20,7 +30,12 @@ class _DetailsState extends State<Details> {
       backgroundColor: HexColor("#6EBF8B"),
       appBar: buildAppBar(context),
       body: Body(
-        product: widget.product,
+        id: widget.id,
+        price: widget.price,
+        Miligramme: widget.Miligramme,
+        Qte: widget.Qte,
+        image: widget.image,
+        name: widget.name,
       ),
     );
   }
@@ -69,8 +84,15 @@ class _DetailsState extends State<Details> {
               ),
         IconButton(
           onPressed: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => shoppingcart()));
+            setState(() {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (BuildContext context) {
+                    return MainHome(pageindex: 1);
+                  },
+                ),
+              );
+            });
           },
           icon: Image.asset('images/shopping-cart.png'),
         ),
