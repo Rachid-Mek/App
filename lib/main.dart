@@ -1,10 +1,11 @@
 import 'dart:math';
-import 'package:my_app/home.dart';
-import 'package:my_app/shoppingcart.dart';
-import 'package:my_app/notification.dart';
-import 'package:my_app/account.dart';
+import 'package:app/home.dart';
+import 'package:app/shoppingcart.dart';
+import 'package:app/notification.dart';
+import 'package:app/account.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'globals.dart' as global;
 
 void main() {
   runApp(const MyApp());
@@ -22,61 +23,54 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: MainHome(),
+      home: MainHome(pageindex: 0),
       theme: ThemeData(primarySwatch: buildMaterialColor(Color(0xFF417D7A))),
     );
   }
 }
 
 class MainHome extends StatefulWidget {
-  MainHome({Key? key}) : super(key: key);
+  int pageindex;
+  MainHome({Key? key, required this.pageindex}) : super(key: key);
 
   @override
   State<MainHome> createState() => _MainHomeState();
 }
 
 class _MainHomeState extends State<MainHome> {
-  int currentIndex = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: HexColor("#EDE6DB"),
       body: SafeArea(
-          child: currentIndex == 0
+          child: widget.pageindex == 0
               ? HomePage()
-              : currentIndex == 1
-                  ? shoppingcart()
-                  : currentIndex == 2
-                      ? notifications()
-                      : account()),
+              : widget.pageindex == 1
+                  ? shoppingcart(
+                      shoppinglist: global.shoppinglist,
+                    )
+                  : account()),
       // ****************** Bottom Navigation Bar ********************//
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         //inside the bottomNavigationBar we must do items[ and do our BottomNavgationBarItem>2 and we define our label and icon]
         items: const [
           BottomNavigationBarItem(
-            label: '',
+            label: 'Accueil',
             icon: Icon(
               Icons.home,
               size: 35,
             ),
           ),
           BottomNavigationBarItem(
-            label: '',
+            label: 'Panier',
             icon: Icon(
               Icons.shopping_cart,
               size: 35,
             ),
           ),
           BottomNavigationBarItem(
-            label: '',
-            icon: Icon(
-              Icons.notifications,
-              size: 35,
-            ),
-          ),
-          BottomNavigationBarItem(
-            label: '',
+            label: 'Profil',
             icon: Icon(
               Icons.account_box_sharp,
               size: 35,
@@ -84,11 +78,11 @@ class _MainHomeState extends State<MainHome> {
           )
         ],
         //when we select between icons
-        currentIndex: currentIndex,
+        currentIndex: widget.pageindex,
         //when we tap flutter return an index
         onTap: (int index) {
           setState(() {
-            currentIndex = index;
+            widget.pageindex = index;
           });
         },
       ),
