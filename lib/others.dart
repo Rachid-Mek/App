@@ -1,22 +1,28 @@
 // ignore_for_file: unnecessary_brace_in_string_interps, camel_case_types, prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:my_app/main.dart';
+import 'package:app/main.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:app/shoppingcart.dart';
+import 'globals.dart' as global;
 
 class other extends StatefulWidget {
   final String img;
   final String name;
   final int mg;
-  final int qte;
+  final int id;
+  int qte;
+  int qteAchete;
   final int price;
-  const other(
+  other(
       {Key? key,
       required this.img,
       required this.name,
       required this.mg,
+      required this.id,
       required this.qte,
-      required this.price})
+      required this.price,
+      required this.qteAchete})
       : super(key: key);
 
   @override
@@ -54,8 +60,8 @@ class _otherState extends State<other> {
                     width: 3,
                   ),
                 ),
-                child: Image.asset(
-                  widget.img,
+                child: Image.network(
+                  "https://pharmacile.000webhostapp.com/site/uploads/${widget.img}",
                   height: 90,
                 ),
               ),
@@ -88,7 +94,23 @@ class _otherState extends State<other> {
                               padding: EdgeInsets.all(0),
                               onPressed: (() {
                                 setState(
-                                  () {},
+                                  () {
+                                    if (widget.qteAchete > 1) {
+                                      widget.qteAchete--;
+                                      global
+                                          .shoppinglist[global.shoppinglist
+                                              .indexWhere((element) =>
+                                                  element.id == widget.id)]
+                                          .QteAchte = widget.qteAchete;
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (BuildContext context) {
+                                            return MainHome(pageindex: 1);
+                                          },
+                                        ),
+                                      );
+                                    }
+                                  },
                                 );
                               }),
                             ),
@@ -101,7 +123,7 @@ class _otherState extends State<other> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                "${widget.qte}",
+                                "${widget.qteAchete}",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontWeight: FontWeight.w400,
@@ -123,7 +145,23 @@ class _otherState extends State<other> {
                               padding: EdgeInsets.all(0),
                               onPressed: (() {
                                 setState(
-                                  () {},
+                                  () {
+                                    if (widget.qteAchete < widget.qte) {
+                                      widget.qteAchete++;
+                                      global
+                                          .shoppinglist[global.shoppinglist
+                                              .indexWhere((element) =>
+                                                  element.id == widget.id)]
+                                          .QteAchte = widget.qteAchete;
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (BuildContext context) {
+                                            return MainHome(pageindex: 1);
+                                          },
+                                        ),
+                                      );
+                                    }
+                                  },
                                 );
                               }),
                             ),
@@ -144,7 +182,17 @@ class _otherState extends State<other> {
                               padding: EdgeInsets.all(0),
                               onPressed: (() {
                                 setState(
-                                  () {},
+                                  () {
+                                    global.shoppinglist.removeWhere(
+                                        (element) => element.id == widget.id);
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (BuildContext context) {
+                                          return MainHome(pageindex: 1);
+                                        },
+                                      ),
+                                    );
+                                  },
                                 );
                               }),
                             ),
@@ -172,7 +220,7 @@ class _otherState extends State<other> {
                         ),
                       ),
                       Text(
-                        "\$${widget.qte * widget.price}",
+                        "\$${widget.qteAchete * widget.price}",
                         style: TextStyle(
                           fontWeight: FontWeight.w400,
                           fontSize: 18,
