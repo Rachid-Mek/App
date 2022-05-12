@@ -3,12 +3,21 @@
 import 'package:app/details/addtocarte.dart';
 import 'package:app/details/cartcounter.dart';
 import 'package:app/details/productwithimage.dart';
-import 'package:app/medicament.dart';
 import 'package:flutter/material.dart';
 
 class Body extends StatelessWidget {
-  final Product product;
-  const Body({Key? key, required this.product}) : super(key: key);
+  final int id, price, Miligramme;
+  int Qte;
+  final String image, name;
+  Body({
+    Key? key,
+    required this.id,
+    required this.Miligramme,
+    required this.name,
+    required this.Qte,
+    required this.price,
+    required this.image,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -52,14 +61,29 @@ class Body extends StatelessWidget {
                         SizedBox(
                           height: 10,
                         ),
-                        CarteCounter(),
+                        CarteCounter(
+                          QteR: Qte,
+                          id: id,
+                        ),
                         SizedBox(
                           height: 10,
                         ),
-                        AddToCarte()
+                        AddToCarte(
+                            id: id,
+                            Miligramme: Miligramme,
+                            name: name,
+                            Qte: Qte,
+                            price: price,
+                            image: image)
                       ]),
                 ),
-                ProductTitlewithImage(product: product)
+                ProductTitlewithImage(
+                    id: id,
+                    Miligramme: Miligramme,
+                    name: name,
+                    Qte: Qte,
+                    price: price,
+                    image: image)
               ],
             ),
           )
