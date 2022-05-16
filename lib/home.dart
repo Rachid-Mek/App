@@ -5,6 +5,7 @@ import 'package:hexcolor/hexcolor.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:app/details/details_product.dart';
+import 'globals.dart' as global;
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
@@ -72,8 +73,10 @@ class _HomePageState extends State<HomePage> {
                           children: [
                             // ignore: prefer_const_constructors
                             Center(
-                              child: const Text(
-                                "VOUS N'ETES PAS CONNECTER",
+                              child: Text(
+                                global.isloggedin
+                                    ? "Vous Etes Connecté"
+                                    : "Vous N'étes pas connecté",
                                 // ignore: prefer_const_constructors
                                 style: TextStyle(
                                     fontSize: 25, fontWeight: FontWeight.bold),
@@ -85,7 +88,9 @@ class _HomePageState extends State<HomePage> {
                             ),
                             // ignore: prefer_const_constructors
                             Text(
-                              "connecter vous pour profiter d'option supplimentaires",
+                              global.isloggedin
+                                  ? "Bienvenue a notre application"
+                                  : "connecter vous pour profiter d'option supplimentaires",
                               // ignore: prefer_const_constructors
                               style: TextStyle(fontSize: 19),
                             )
@@ -93,27 +98,29 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       // button
-                      SizedBox(
-                        width: 80,
-                        height: 40,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (BuildContext context) {
-                                    return connect();
-                                  },
-                                ),
-                              );
-                            });
-                          },
-                          child: const Text("LOGIN"),
-                          style: ElevatedButton.styleFrom(
-                              primary: HexColor("#069A8E"),
-                              shape: StadiumBorder()),
+                      if (global.isloggedin == false) ...[
+                        SizedBox(
+                          width: 80,
+                          height: 40,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (BuildContext context) {
+                                      return connect();
+                                    },
+                                  ),
+                                );
+                              });
+                            },
+                            child: const Text("LOGIN"),
+                            style: ElevatedButton.styleFrom(
+                                primary: HexColor("#069A8E"),
+                                shape: StadiumBorder()),
+                          ),
                         ),
-                      ),
+                      ]
                     ],
                   ),
                 ),
@@ -188,6 +195,7 @@ class _HomePageState extends State<HomePage> {
                                 int.parse(productList[index]['Miligramme']),
                             Qte: int.parse(productList[index]['Quantite']),
                             price: int.parse(productList[index]['Prix']),
+                            idpharm: int.parse(productList[index]['pharma_Id']),
                           ),
                         )),
                   ),
