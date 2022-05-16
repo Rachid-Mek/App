@@ -69,7 +69,7 @@ class _otherState extends State<other> {
                 padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
                 child: Container(
                   height: 85,
-                  width: 150,
+                  width: 140,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -118,7 +118,7 @@ class _otherState extends State<other> {
                         ),
                         Container(
                           height: 30,
-                          width: 30,
+                          width: 20,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -146,7 +146,7 @@ class _otherState extends State<other> {
                               onPressed: (() {
                                 setState(
                                   () {
-                                    if (widget.qteAchete < widget.qte) {
+                                    if ((widget.qte - widget.qteAchete) > 0) {
                                       widget.qteAchete++;
                                       global
                                           .shoppinglist[global.shoppinglist
@@ -183,6 +183,7 @@ class _otherState extends State<other> {
                               onPressed: (() {
                                 setState(
                                   () {
+                                    widget.qteAchete = 0;
                                     global.shoppinglist.removeWhere(
                                         (element) => element.id == widget.id);
                                     Navigator.of(context).push(
@@ -207,7 +208,7 @@ class _otherState extends State<other> {
                 padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
                 child: Container(
                   height: 85,
-                  width: 80,
+                  width: 70,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.end,
