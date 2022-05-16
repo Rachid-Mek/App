@@ -4,14 +4,16 @@ import 'package:app/details/addtocarte.dart';
 import 'package:app/details/cartcounter.dart';
 import 'package:app/details/productwithimage.dart';
 import 'package:flutter/material.dart';
+import 'package:app/globals.dart' as global;
 
 class Body extends StatelessWidget {
-  final int id, price, Miligramme;
+  final int id, price, Miligramme, idpharm;
   int Qte;
   final String image, name;
   Body({
     Key? key,
     required this.id,
+    required this.idpharm,
     required this.Miligramme,
     required this.name,
     required this.Qte,
@@ -21,6 +23,7 @@ class Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var indext = global.shoppinglist.indexWhere((element) => element.id == id);
     Size size = MediaQuery.of(context).size;
     //it provided us total height and width
     return SingleChildScrollView(
@@ -61,20 +64,28 @@ class Body extends StatelessWidget {
                         SizedBox(
                           height: 10,
                         ),
-                        CarteCounter(
-                          QteR: Qte,
-                          id: id,
-                        ),
+                        indext == -1
+                            ? CarteCounter(
+                                QteR: (Qte - 1),
+                                id: id,
+                              )
+                            : CarteCounter(
+                                QteR: (Qte -
+                                    global.shoppinglist[indext].QteAchte),
+                                id: id,
+                              ),
                         SizedBox(
                           height: 10,
                         ),
                         AddToCarte(
-                            id: id,
-                            Miligramme: Miligramme,
-                            name: name,
-                            Qte: Qte,
-                            price: price,
-                            image: image)
+                          id: id,
+                          Miligramme: Miligramme,
+                          name: name,
+                          Qte: Qte,
+                          price: price,
+                          image: image,
+                          idpharm: idpharm,
+                        )
                       ]),
                 ),
                 ProductTitlewithImage(
