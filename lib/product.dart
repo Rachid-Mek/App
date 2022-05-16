@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'globals.dart' as global;
 
 class ProductCard extends StatelessWidget {
   final int id, price, Miligramme, Qte;
@@ -20,6 +21,7 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var indext = global.shoppinglist.indexWhere((element) => element.id == id);
     if (Miligramme != 0) {
       return GestureDetector(
         onTap: () => press(),
@@ -70,7 +72,9 @@ class ProductCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Quantité: ${Qte}",
+                    indext == -1
+                        ? "Quantité: ${Qte}"
+                        : "Quantité: ${Qte - global.shoppinglist[indext].QteAchte}",
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Text(
@@ -126,7 +130,9 @@ class ProductCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Quantité: ${Qte}",
+                    indext == -1
+                        ? "Quantité: ${Qte}"
+                        : "Quantité: ${Qte - global.shoppinglist[indext].QteAchte}",
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Text(
