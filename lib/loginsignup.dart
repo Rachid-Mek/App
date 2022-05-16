@@ -3,11 +3,12 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/services.dart';
-import 'package:app/home.dart';
+import 'package:app/main.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:hexcolor/hexcolor.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'globals.dart' as global;
 
 class connect extends StatefulWidget {
   connect({Key? key}) : super(key: key);
@@ -26,6 +27,27 @@ class _connectState extends State<connect> {
   TextEditingController nvemail = TextEditingController();
   TextEditingController nvpassword = TextEditingController();
   TextEditingController nvpasswordconfirm = TextEditingController();
+
+  List userInfo = List.empty();
+  getUserInfo() async {
+    var url =
+        "https://pharmacile.000webhostapp.com/appmobile/fetchuserinfi.php";
+    var data = {
+      "userID": global.userID.toString(),
+    };
+    var response = await http.post(Uri.parse(url), body: data);
+    if (response.statusCode == 200) {
+      if (this.mounted) {
+        setState(
+          () {
+            userInfo = jsonDecode(response.body);
+          },
+        );
+      }
+      global.infouser = userInfo;
+      return (global.infouser);
+    }
+  }
 
   Future login() async {
     var url = "https://pharmacile.000webhostapp.com/appmobile/applogin.php";
@@ -46,19 +68,17 @@ class _connectState extends State<connect> {
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           fontSize: 16);
-    } else if (jsonDecode(response.body) == "success") {
-      Fluttertoast.showToast(
-          msg: "Welcome",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          fontSize: 16);
     } else {
-      Fluttertoast.showToast(
-          msg: jsonDecode(response.body),
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          fontSize: 16);
-      print(response.statusCode);
+      global.isloggedin = true;
+      global.userID = int.parse(jsonDecode(response.body));
+      getUserInfo();
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (BuildContext context) {
+            return MainHome(pageindex: 0);
+          },
+        ),
+      );
     }
   }
 
