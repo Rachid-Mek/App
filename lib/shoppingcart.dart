@@ -5,9 +5,13 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:app/main.dart';
 import 'package:app/med.dart';
 import 'package:app/others.dart';
 import 'globals.dart' as global;
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:fluttertoast/fluttertoast.dart';
 
 class shoppingcart extends StatefulWidget {
   List<Med> shoppinglist = List.empty();
@@ -18,6 +22,16 @@ class shoppingcart extends StatefulWidget {
 }
 
 class _shoppingcartState extends State<shoppingcart> {
+  TextEditingController id = TextEditingController();
+  TextEditingController iduser = TextEditingController();
+  TextEditingController idpharm = TextEditingController();
+  TextEditingController image = TextEditingController();
+  TextEditingController name = TextEditingController();
+  TextEditingController Miligramme = TextEditingController();
+  TextEditingController Qte = TextEditingController();
+  TextEditingController QteAchte = TextEditingController();
+  TextEditingController price = TextEditingController();
+  TextEditingController pricetotal = TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -26,7 +40,76 @@ class _shoppingcartState extends State<shoppingcart> {
 
   @override
   Widget build(BuildContext context) {
-    if (global.prixtotal != 0) {
+    bool reserve = false;
+    Future reserver() async {
+      var url = "https://pharmacile.000webhostapp.com/appmobile/panier.php";
+
+      for (var element in widget.shoppinglist) {
+        var QteRestante = element.Qte - element.QteAchte;
+        var Prix = element.QteAchte * element.price;
+
+        id.text = element.id.toString();
+        iduser.text = global.userID.toString();
+        idpharm.text = element.idpharm.toString();
+        //image.text = element.image,
+        //name.text = element.name,
+        //Miligramme.text = element.Miligramme.toString(),
+        Qte.text = QteRestante.toString();
+        QteAchte.text = element.QteAchte.toString();
+        pricetotal.text = Prix.toString();
+
+        var response = await http.post(
+          Uri.parse(url),
+          headers: {"Accept": "application/json"},
+          body: {
+            "id": id.text,
+            "iduser": iduser.text,
+            "idpharm": idpharm.text,
+            "Qte": Qte.text,
+            "QteAchte": QteAchte.text,
+            "pricetotal": pricetotal.text,
+          },
+        );
+
+        if (jsonDecode(response.body) == "error 1") {
+          Fluttertoast.showToast(
+              msg: "Erreur modification medicament",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              fontSize: 16);
+          reserve = false;
+        } else if (jsonDecode(response.body) == "error 2") {
+          Fluttertoast.showToast(
+              msg: "Erreur Panier",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              fontSize: 16);
+          reserve = false;
+        } else {
+          reserve = true;
+        }
+      }
+      if (reserve == true) {
+        global.shoppinglist.clear();
+        Fluttertoast.showToast(
+            msg: "Réservé correctement",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            fontSize: 16);
+        reserve = false;
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (BuildContext context) {
+              return MainHome(pageindex: 0);
+            },
+          ),
+        );
+      }
+    }
+
+    ;
+
+    if (global.prixtotal != 0 && global.isloggedin == true) {
       return Scaffold(
         backgroundColor: HexColor("#EDE6DB"),
         body: SafeArea(
@@ -34,14 +117,14 @@ class _shoppingcartState extends State<shoppingcart> {
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                  padding: const EdgeInsets.fromLTRB(0, 20, 0, 15),
                   child: Text(
                     "Panier",
                     style: GoogleFonts.staatliches(
                       textStyle: TextStyle(
                         color: HexColor("#069A8E"),
                         fontWeight: FontWeight.w400,
-                        fontSize: 48,
+                        fontSize: 50,
                       ),
                     ),
                   ),
@@ -50,7 +133,16 @@ class _shoppingcartState extends State<shoppingcart> {
                   height: 2,
                 ),
                 Container(
-                  height: 375,
+                  height: 402,
+                  width: 380,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: HexColor("#6EBF8B"),
+                      width: 3,
+                    ),
+                  ),
                   child: ListView.builder(
                     itemCount: widget.shoppinglist.length,
                     itemBuilder: (context, index) => other(
@@ -66,29 +158,33 @@ class _shoppingcartState extends State<shoppingcart> {
                 ),
                 Spacer(),
                 Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                  padding: const EdgeInsets.fromLTRB(10, 10, 10, 25),
+                  child: Row(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                        child: Text(
-                          "Votre Total Est",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w400,
-                            fontSize: 25,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                            child: Text(
+                              "Votre Total Est",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                fontSize: 25,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                        child: Text(
-                          "${global.prixtotal}",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w300,
-                            fontSize: 25,
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                            child: Text(
+                              "${global.prixtotal}",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w300,
+                                fontSize: 25,
+                              ),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
@@ -98,7 +194,9 @@ class _shoppingcartState extends State<shoppingcart> {
                           child: ElevatedButton(
                             onPressed: (() {
                               setState(
-                                () {},
+                                () {
+                                  reserver();
+                                },
                               );
                             }),
                             child: const Text(
