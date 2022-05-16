@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:app/home.dart';
 import 'package:app/shoppingcart.dart';
-import 'package:app/notification.dart';
 import 'package:app/account.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
