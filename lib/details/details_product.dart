@@ -6,12 +6,13 @@ import 'package:hexcolor/hexcolor.dart';
 import 'package:app/globals.dart' as global;
 
 class Details extends StatefulWidget {
-  final int id, price, Miligramme, Qte;
+  final int id, price, Miligramme, Qte, idpharm;
   final String image, name;
 
   const Details({
     Key? key,
     required this.id,
+    required this.idpharm,
     required this.Miligramme,
     required this.name,
     required this.Qte,
@@ -31,6 +32,7 @@ class _DetailsState extends State<Details> {
       appBar: buildAppBar(context),
       body: Body(
         id: widget.id,
+        idpharm: widget.idpharm,
         price: widget.price,
         Miligramme: widget.Miligramme,
         Qte: widget.Qte,
