@@ -1,12 +1,14 @@
 // ignore_for_file: prefer_const_constructors
-
+import 'dart:async';
+import 'package:app/details/MapScreen.dart';
 import 'package:app/details/addtocarte.dart';
 import 'package:app/details/cartcounter.dart';
 import 'package:app/details/productwithimage.dart';
 import 'package:flutter/material.dart';
 import 'package:app/globals.dart' as global;
+import 'package:hexcolor/hexcolor.dart';
 
-class Body extends StatelessWidget {
+class Body extends StatefulWidget {
   final int id, price, Miligramme, idpharm;
   int Qte;
   final String image, name;
@@ -22,8 +24,14 @@ class Body extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<Body> createState() => _BodyState();
+}
+
+class _BodyState extends State<Body> {
+  @override
   Widget build(BuildContext context) {
-    var indext = global.shoppinglist.indexWhere((element) => element.id == id);
+    var indext =
+        global.shoppinglist.indexWhere((element) => element.id == widget.id);
     Size size = MediaQuery.of(context).size;
     //it provided us total height and width
     return SingleChildScrollView(
@@ -62,39 +70,87 @@ class Body extends StatelessWidget {
                           style: TextStyle(fontSize: 18),
                         ),
                         SizedBox(
+                          height: 5,
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              "Notre location :  ",
+                              style: TextStyle(fontSize: 18),
+                            ),
+                            ElevatedButton.icon(
+                              label: Text(
+                                "Voir la map".toUpperCase(),
+                                style: const TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
+                              ),
+                              icon: Icon(
+                                Icons.location_on,
+                                color: Colors.white,
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                side: BorderSide(
+                                    width: 3, color: HexColor("#069A8E")),
+                                primary: HexColor("#069A8E"),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18)),
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (BuildContext context) {
+                                        return MapSample();
+                                      },
+                                    ),
+                                  );
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        SizedBox(
                           height: 10,
                         ),
                         indext == -1
                             ? CarteCounter(
-                                QteR: (Qte - 1),
-                                id: id,
+                                QteR: (widget.Qte - 1),
+                                id: widget.id,
                               )
                             : CarteCounter(
-                                QteR: (Qte -
+                                QteR: (widget.Qte -
                                     global.shoppinglist[indext].QteAchte),
-                                id: id,
+                                id: widget.id,
                               ),
                         SizedBox(
                           height: 10,
                         ),
                         AddToCarte(
-                          id: id,
-                          Miligramme: Miligramme,
-                          name: name,
-                          Qte: Qte,
-                          price: price,
-                          image: image,
-                          idpharm: idpharm,
+                          id: widget.id,
+                          Miligramme: widget.Miligramme,
+                          name: widget.name,
+                          Qte: widget.Qte,
+                          price: widget.price,
+                          image: widget.image,
+                          idpharm: widget.idpharm,
                         )
                       ]),
                 ),
                 ProductTitlewithImage(
-                    id: id,
-                    Miligramme: Miligramme,
-                    name: name,
-                    Qte: Qte,
-                    price: price,
-                    image: image)
+                    id: widget.id,
+                    Miligramme: widget.Miligramme,
+                    name: widget.name,
+                    Qte: widget.Qte,
+                    price: widget.price,
+                    image: widget.image),
+                SizedBox(
+                  height: 10,
+                ),
               ],
             ),
           )
