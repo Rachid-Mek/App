@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'globals.dart' as global;
