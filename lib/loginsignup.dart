@@ -1,5 +1,5 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, duplicate_ignore
-
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:hexcolor/hexcolor.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'globals.dart' as global;
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 class connect extends StatefulWidget {
   connect({Key? key}) : super(key: key);
@@ -30,105 +31,115 @@ class _connectState extends State<connect> {
 
   List userInfo = List.empty();
   getUserInfo() async {
-    var url =
-        "https://pharmacile.000webhostapp.com/appmobile/fetchuserinfi.php";
-    var data = {
-      "userID": global.userID.toString(),
-    };
-    var response = await http.post(Uri.parse(url), body: data);
-    if (response.statusCode == 200) {
-      if (this.mounted) {
-        setState(
-          () {
-            userInfo = jsonDecode(response.body);
-          },
-        );
+    try {
+      var url =
+          "https://pharmacile.000webhostapp.com/appmobile/fetchuserinfi.php";
+      var data = {
+        "userID": global.userID.toString(),
+      };
+      var response = await http.post(Uri.parse(url), body: data);
+      if (response.statusCode == 200) {
+        if (this.mounted) {
+          setState(
+            () {
+              userInfo = jsonDecode(response.body);
+            },
+          );
+        }
+        global.infouser = userInfo;
+        return (global.infouser);
       }
-      global.infouser = userInfo;
-      return (global.infouser);
+    } catch (e) {
+      EasyLoading.showError('Erreur de connexion');
+      EasyLoading.dismiss();
     }
   }
 
   Future login() async {
-    var url = "https://pharmacile.000webhostapp.com/appmobile/applogin.php";
-    var data = {
-      "email": email.text,
-      "password": password.text,
-    };
+    try {
+      var url = "https://pharmacile.000webhostapp.com/appmobile/applogin.php";
+      var data = {
+        "email": email.text,
+        "password": password.text,
+      };
 
-    var response = await http.post(
-      Uri.parse(url),
-      headers: {"Accept": "application/json"},
-      body: data,
-    );
-
-    if (jsonDecode(response.body) == "error") {
-      Fluttertoast.showToast(
-          msg: "Email ou Mot De Passe Incorrect",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          fontSize: 16);
-    } else {
-      global.isloggedin = true;
-      global.userID = int.parse(jsonDecode(response.body));
-      getUserInfo();
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (BuildContext context) {
-            return MainHome(pageindex: 0);
-          },
-        ),
+      EasyLoading.show(status: 'Connexion en cours ...');
+      var response = await http.post(
+        Uri.parse(url),
+        headers: {"Accept": "application/json"},
+        body: data,
       );
+      if (jsonDecode(response.body) == "error") {
+        EasyLoading.showError('Email ou Mot De Passe Incorrect');
+      } else {
+        global.isloggedin = true;
+        global.userID = int.parse(jsonDecode(response.body));
+        getUserInfo();
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (BuildContext context) {
+              return MainHome(pageindex: 0);
+            },
+          ),
+        );
+      }
+      EasyLoading.dismiss();
+    } catch (e) {
+      EasyLoading.showError('Erreur de connexion');
+      EasyLoading.dismiss();
     }
   }
 
   Future signup() async {
-    var url = "https://pharmacile.000webhostapp.com/appmobile/appsignup.php";
-    var data = {
-      "nom": nom.text,
-      "prenom": prenom.text,
-      "numtel": numtel.text,
-      "nvemail": nvemail.text,
-      "nvpassword": nvpassword.text,
-      "nvpasswordconfirm": nvpasswordconfirm.text,
-    };
+    try {
+      var url = "https://pharmacile.000webhostapp.com/appmobile/appsignup.php";
+      var data = {
+        "nom": nom.text,
+        "prenom": prenom.text,
+        "numtel": numtel.text,
+        "nvemail": nvemail.text,
+        "nvpassword": nvpassword.text,
+        "nvpasswordconfirm": nvpasswordconfirm.text,
+      };
 
-    var response = await http.post(
-      Uri.parse(url),
-      headers: {"Accept": "application/json"},
-      body: data,
-    );
+      EasyLoading.show(status: 'ajout de compte en cour ...');
+      var response = await http.post(
+        Uri.parse(url),
+        headers: {"Accept": "application/json"},
+        body: data,
+      );
 
-    if (jsonDecode(response.body) == "error password") {
-      Fluttertoast.showToast(
-          msg: "mot de passe et sa confirmation ne correspond pas",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          fontSize: 16);
-    } else if (jsonDecode(response.body) == "error exist") {
-      Fluttertoast.showToast(
-          msg: "le compte existe deja",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          fontSize: 16);
-    } else if (jsonDecode(response.body) == "success") {
-      Fluttertoast.showToast(
-          msg: "compte est ajouter correctement",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          fontSize: 16);
-    } else if (jsonDecode(response.body) == "error add") {
-      Fluttertoast.showToast(
-          msg: "Erreur, compte n'est pas ajouter",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          fontSize: 16);
-    } else {
-      Fluttertoast.showToast(
-          msg: "Erreur",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          fontSize: 16);
+      if (jsonDecode(response.body) == "error password") {
+        Fluttertoast.showToast(
+            msg: "mot de passe et sa confirmation ne correspond pas",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            fontSize: 16);
+      } else if (jsonDecode(response.body) == "error exist") {
+        Fluttertoast.showToast(
+            msg: "le compte existe deja",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            fontSize: 16);
+      } else if (jsonDecode(response.body) == "success") {
+        EasyLoading.showSuccess('compte est ajouter correctement');
+      } else if (jsonDecode(response.body) == "error add") {
+        Fluttertoast.showToast(
+            msg: "Erreur, compte n'est pas ajouter",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            fontSize: 16);
+      } else {
+        Fluttertoast.showToast(
+            msg: "Erreur",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            fontSize: 16);
+      }
+      EasyLoading.dismiss();
+    } catch (e) {
+      EasyLoading.showError('Erreur de connexion');
+      EasyLoading.dismiss();
     }
   }
 
