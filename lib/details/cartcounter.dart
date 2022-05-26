@@ -3,8 +3,10 @@ import 'package:app/globals.dart' as global;
 
 class CarteCounter extends StatefulWidget {
   int QteR;
+  int QteM;
   final int id;
-  CarteCounter({Key? key, required this.QteR, required this.id})
+  CarteCounter(
+      {Key? key, required this.QteR, required this.id, required this.QteM})
       : super(key: key);
 
   @override
@@ -43,8 +45,11 @@ class _CarteCounterState extends State<CarteCounter> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 7),
                   child: Text(
-                    //if the qte is less than 10 it shown 01 02...
-                    global.qte.toString().padLeft(2, "0"),
+                    widget.QteM == 0
+                        ? "00"
+                        :
+                        //if the qte is less than 10 it shown 01 02...
+                        global.qte.toString().padLeft(2, "0"),
                     style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
                   ),
                 ),
