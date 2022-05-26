@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:app/main.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:app/shoppingcart.dart';
 import 'globals.dart' as global;
 
 class other extends StatefulWidget {
@@ -83,7 +82,7 @@ class _otherState extends State<other> {
                       ),
                       Row(children: [
                         SizedBox(
-                          width: 35,
+                          width: 30,
                           height: 35,
                           child: Card(
                             color: HexColor("#069A8E"),
@@ -118,7 +117,7 @@ class _otherState extends State<other> {
                         ),
                         Container(
                           height: 30,
-                          width: 20,
+                          width: 30,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -134,7 +133,7 @@ class _otherState extends State<other> {
                           ),
                         ),
                         SizedBox(
-                          width: 35,
+                          width: 30,
                           height: 35,
                           child: Card(
                             color: HexColor("#069A8E"),
@@ -171,7 +170,7 @@ class _otherState extends State<other> {
                           width: 10,
                         ),
                         SizedBox(
-                          width: 35,
+                          width: 30,
                           height: 35,
                           child: Card(
                             color: HexColor("#069A8E"),
