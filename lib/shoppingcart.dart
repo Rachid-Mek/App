@@ -1,7 +1,5 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
-
-import 'dart:math';
-
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,6 +10,9 @@ import 'globals.dart' as global;
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 class shoppingcart extends StatefulWidget {
   List<Med> shoppinglist = List.empty();
@@ -41,69 +42,141 @@ class _shoppingcartState extends State<shoppingcart> {
   @override
   Widget build(BuildContext context) {
     bool reserve = false;
+    bool trouve = false;
+    int i = 0;
+    List<int> ids = List.empty();
+    ids = ids.toList();
+
+    for (var elemnt in global.shoppinglist) {
+      trouve = false;
+      while (i < ids.length && trouve == false) {
+        ids[i] == elemnt.idpharm ? trouve == true : trouve == false;
+        i = i + 1;
+      }
+      if (trouve == false) {
+        ids.add(elemnt.idpharm);
+      }
+    }
+    print(ids);
     Future reserver() async {
-      var url = "https://pharmacile.000webhostapp.com/appmobile/panier.php";
-
-      for (var element in widget.shoppinglist) {
-        var QteRestante = element.Qte - element.QteAchte;
-        var Prix = element.QteAchte * element.price;
-
-        id.text = element.id.toString();
-        iduser.text = global.userID.toString();
-        idpharm.text = element.idpharm.toString();
-        //image.text = element.image,
-        //name.text = element.name,
-        //Miligramme.text = element.Miligramme.toString(),
-        Qte.text = QteRestante.toString();
-        QteAchte.text = element.QteAchte.toString();
-        pricetotal.text = Prix.toString();
-
-        var response = await http.post(
-          Uri.parse(url),
-          headers: {"Accept": "application/json"},
-          body: {
-            "id": id.text,
-            "iduser": iduser.text,
-            "idpharm": idpharm.text,
-            "Qte": Qte.text,
-            "QteAchte": QteAchte.text,
-            "pricetotal": pricetotal.text,
+      try {
+        String username = 'pharmacile.live@gmail.com';
+        String password = 'PFE2022karimRACHID';
+        global.shoppinglist.forEach(
+          (element) {
+            global.emailmessage = global.emailmessage +
+                "<tr><td> " +
+                "<b> Le Produit</b>: " +
+                element.name.toString().toUpperCase() +
+                " " +
+                element.Miligramme.toString() +
+                " ," +
+                "<b> La Quantité: </b>" +
+                element.QteAchte.toString() +
+                " ," +
+                "<b> Le Prix Total: </b>" +
+                (element.QteAchte * element.price).toString() +
+                "<b> L'email de la pharmacie: </b>" +
+                element.pharmemail.toString() +
+                '</td></tr>';
+            //global.emailmessage.add('\n');
           },
         );
 
-        if (jsonDecode(response.body) == "error 1") {
-          Fluttertoast.showToast(
-              msg: "Erreur modification medicament",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.CENTER,
-              fontSize: 16);
-          reserve = false;
-        } else if (jsonDecode(response.body) == "error 2") {
-          Fluttertoast.showToast(
-              msg: "Erreur Panier",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.CENTER,
-              fontSize: 16);
-          reserve = false;
-        } else {
-          reserve = true;
-        }
-      }
-      if (reserve == true) {
-        global.shoppinglist.clear();
-        Fluttertoast.showToast(
-            msg: "Réservé correctement",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
-            fontSize: 16);
-        reserve = false;
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (BuildContext context) {
-              return MainHome(pageindex: 0);
+        final smtpServer = gmail(username, password);
+
+        final message1 = Message()
+          ..from = Address(username, 'Pharmacile')
+          ..recipients.add(global.infouser[0]['Email'])
+          //..ccRecipients.addAll(['destCc1@example.com', 'destCc2@example.com'])
+          //..bccRecipients.add(Address('bccAddress@example.com'))
+          ..subject = 'Réservation de produit avec pharmacile :'
+          ..html =
+              '<h1>Vous avez réservez :</h1>\n<table>${global.emailmessage}</table>';
+
+        var url = "https://pharmacile.000webhostapp.com/appmobile/panier.php";
+
+        for (var element in widget.shoppinglist) {
+          var QteRestante = element.Qte - element.QteAchte;
+          var Prix = element.QteAchte * element.price;
+
+          id.text = element.id.toString();
+          iduser.text = global.userID.toString();
+          idpharm.text = element.idpharm.toString();
+          //image.text = element.image,
+          //name.text = element.name,
+          //Miligramme.text = element.Miligramme.toString(),
+          Qte.text = QteRestante.toString();
+          QteAchte.text = element.QteAchte.toString();
+          pricetotal.text = Prix.toString();
+
+          var response = await http.post(
+            Uri.parse(url),
+            headers: {"Accept": "application/json"},
+            body: {
+              "id": id.text,
+              "iduser": iduser.text,
+              "idpharm": idpharm.text,
+              "Qte": Qte.text,
+              "QteAchte": QteAchte.text,
+              "pricetotal": pricetotal.text,
             },
-          ),
-        );
+          );
+
+          if (jsonDecode(response.body) == "error 1") {
+            Fluttertoast.showToast(
+                msg: "Erreur modification medicament",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.CENTER,
+                fontSize: 16);
+            reserve = false;
+          } else if (jsonDecode(response.body) == "error 2") {
+            Fluttertoast.showToast(
+                msg: "Erreur Panier",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.CENTER,
+                fontSize: 16);
+            reserve = false;
+          } else {
+            reserve = true;
+          }
+        }
+        if (reserve == true) {
+          EasyLoading.show(status: 'Résevation en cours...');
+          final sendReport1 = await send(message1, smtpServer);
+
+          for (var id in ids) {
+            final indexcond = global.shoppinglist
+                .indexWhere((element) => element.idpharm == id);
+            print(global.shoppinglist[indexcond].pharmemail);
+
+            final message1 = Message()
+              ..from = Address(username, 'Pharmacile')
+              ..recipients
+                  .add(global.shoppinglist[indexcond].pharmemail.toString())
+              //..ccRecipients.addAll(['destCc1@example.com', 'destCc2@example.com'])
+              //..bccRecipients.add(Address('bccAddress@example.com'))
+              ..subject = 'Réservation de produit avec pharmacile :'
+              ..html =
+                  '<h1>Nouvelle Résevation :</h1>\n<table>${global.emailmessage}</table><p><b>fait par:</b><br> ${global.infouser[0]['Nom']} ${global.infouser[0]['Prenom']} <br>Email: ${global.infouser[0]['Email']}<br>Numero Telephone: ${global.infouser[0]['numerotel']}</p>';
+            final sendReport1 = await send(message1, smtpServer);
+            EasyLoading.showSuccess('Réservé correctement!');
+          }
+          reserve = false;
+          global.shoppinglist.clear();
+          global.emailmessage = "";
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (BuildContext context) {
+                return MainHome(pageindex: 0);
+              },
+            ),
+          );
+          EasyLoading.dismiss();
+        }
+      } catch (e) {
+        EasyLoading.showError('Erreur, Réservation non enregistré');
+        EasyLoading.dismiss();
       }
     }
 
@@ -225,6 +298,7 @@ class _shoppingcartState extends State<shoppingcart> {
         body: SafeArea(
           child: Center(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
@@ -251,6 +325,7 @@ class _shoppingcartState extends State<shoppingcart> {
                       fontSize: 48,
                     ),
                   ),
+                  textAlign: TextAlign.center,
                 )
               ],
             ),
