@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -24,6 +25,8 @@ class _EditUserState extends State<EditUser> {
   TextEditingController nvemail = TextEditingController();
   TextEditingController nvpassword = TextEditingController();
   TextEditingController nvpasswordconfirm = TextEditingController();
+
+  bool show = false;
 
   Future modifer() async {
     var url = "https://pharmacile.000webhostapp.com/appmobile/appedit.php";
@@ -169,22 +172,58 @@ class _EditUserState extends State<EditUser> {
                             ),
                             hintText: 'Email'),
                       ),
-                      TextField(
-                        controller: nvpassword,
-                        decoration: InputDecoration(
-                            prefixIcon: Icon(
-                              Icons.lock,
-                            ),
-                            hintText: 'Mot De Passe'),
-                      ),
-                      TextField(
-                        controller: nvpasswordconfirm,
-                        decoration: InputDecoration(
-                            prefixIcon: Icon(
-                              Icons.lock,
-                            ),
-                            hintText: 'Confirmer Le Mot De Passe'),
-                      ),
+                      if (!show)
+                        RichText(
+                          text: TextSpan(
+                              style: TextStyle(
+                                  color: Colors.blue,
+                                  height: 2,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold),
+                              text: 'Modifier Le Mot de Passe',
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  setState(() {
+                                    show = true;
+                                  });
+                                }),
+                        ),
+                      if (show)
+                        TextField(
+                          controller: nvpassword,
+                          decoration: InputDecoration(
+                              prefixIcon: Icon(
+                                Icons.lock,
+                              ),
+                              hintText: 'Mot De Passe'),
+                        ),
+                      if (show)
+                        TextField(
+                          controller: nvpasswordconfirm,
+                          decoration: InputDecoration(
+                              prefixIcon: Icon(
+                                Icons.lock,
+                              ),
+                              hintText: 'Confirmer Le Mot De Passe'),
+                        ),
+                      if (show)
+                        RichText(
+                          text: TextSpan(
+                              style: TextStyle(
+                                  color: Colors.blue,
+                                  height: 2,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold),
+                              text: 'Annuler La Modification Du Mot De Passe',
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  setState(() {
+                                    nvpassword.text = "";
+                                    nvpasswordconfirm.text = "";
+                                    show = false;
+                                  });
+                                }),
+                        ),
                     ],
                   ),
                 ),
