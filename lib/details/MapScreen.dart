@@ -124,33 +124,47 @@ class MapSampleState extends State<MapApp> {
           serviceEnabled = await Geolocator.isLocationServiceEnabled();
           if (!serviceEnabled) {
             return Future.error('Location services are disabled');
-          }
-
-          permission = await Geolocator.checkPermission();
-          if (permission == LocationPermission.denied) {
-            permission = await Geolocator.requestPermission();
+          } else {
+            permission = await Geolocator.checkPermission();
             if (permission == LocationPermission.denied) {
-              return Future.error('Location permissions are denied');
+              permission = await Geolocator.requestPermission();
+              if (permission == LocationPermission.denied) {
+                return Future.error('Location permissions are denied');
+              } else {
+                var position = await Geolocator.getCurrentPosition(
+                    desiredAccuracy: LocationAccuracy.high);
+                _origin = WayPoint(
+                    name: "Way Point 2",
+                    latitude: position.latitude,
+                    longitude: position.longitude);
+
+                var wayPoints = <WayPoint>[];
+                wayPoints.add(_origin);
+                wayPoints.add(_destination);
+
+                await _directions.startNavigation(
+                    wayPoints: wayPoints, options: _options);
+              }
+            }
+            if (permission == LocationPermission.deniedForever) {
+              return Future.error(
+                  'Location permissions are permanently denied, we cannot request permissions.');
+            } else {
+              var position = await Geolocator.getCurrentPosition(
+                  desiredAccuracy: LocationAccuracy.high);
+              _origin = WayPoint(
+                  name: "Way Point 2",
+                  latitude: position.latitude,
+                  longitude: position.longitude);
+
+              var wayPoints = <WayPoint>[];
+              wayPoints.add(_origin);
+              wayPoints.add(_destination);
+
+              await _directions.startNavigation(
+                  wayPoints: wayPoints, options: _options);
             }
           }
-
-          if (permission == LocationPermission.deniedForever) {
-            return Future.error(
-                'Location permissions are permanently denied, we cannot request permissions.');
-          }
-          var position = await Geolocator.getCurrentPosition(
-              desiredAccuracy: LocationAccuracy.high);
-          _origin = WayPoint(
-              name: "Way Point 2",
-              latitude: position.latitude,
-              longitude: position.longitude);
-
-          var wayPoints = <WayPoint>[];
-          wayPoints.add(_origin);
-          wayPoints.add(_destination);
-
-          await _directions.startNavigation(
-              wayPoints: wayPoints, options: _options);
         },
         label: Text('itineraire depuis votre position'),
         icon: Icon(Icons.directions),
