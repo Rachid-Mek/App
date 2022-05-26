@@ -156,31 +156,32 @@ class _HomePageState extends State<HomePage> {
                 const SizedBox(
                   height: 5,
                 ),
-                TextButton.icon(
-                  onPressed: (() {
-                    setState(() {
-                      isPrixAsc = !isPrixAsc;
-                    });
-                  }),
-                  icon: RotatedBox(
-                    quarterTurns: 1,
-                    child: Icon(Icons.compare_arrows, size: 28),
-                  ),
-                  label: Text(
-                    isPrixAsc ? 'Prix Ascendeant' : "Prix Déscendant",
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ),
 
                 // ****************** liste of produits **************//
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: Row(
-                    children: const [
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
                       Text(
                         'Product list:',
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.w700),
+                      ),
+                      TextButton.icon(
+                        onPressed: (() {
+                          setState(() {
+                            isPrixAsc = !isPrixAsc;
+                          });
+                        }),
+                        icon: RotatedBox(
+                          quarterTurns: 1,
+                          child: Icon(Icons.compare_arrows, size: 28),
+                        ),
+                        label: Text(
+                          isPrixAsc ? 'Prix Ascendeant' : "Prix Déscendant",
+                          style: TextStyle(fontSize: 16),
+                        ),
                       ),
                     ],
                   ),
