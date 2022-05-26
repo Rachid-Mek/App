@@ -6,6 +6,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'main.dart';
 import 'globals.dart' as global;
 import 'edituser.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 class account extends StatefulWidget {
   account({Key? key}) : super(key: key);
@@ -15,6 +18,39 @@ class account extends StatefulWidget {
 }
 
 class _accountState extends State<account> {
+  List userInfo = List.empty();
+  getUserInfo() async {
+    try {
+      var url =
+          "https://pharmacile.000webhostapp.com/appmobile/fetchuserinfi.php";
+      var data = {
+        "userID": global.userID.toString(),
+      };
+      var response = await http.post(Uri.parse(url), body: data);
+      if (response.statusCode == 200) {
+        if (this.mounted) {
+          setState(
+            () {
+              userInfo = jsonDecode(response.body);
+            },
+          );
+        }
+        global.infouser = userInfo;
+        return (global.infouser);
+      }
+    } catch (e) {
+      EasyLoading.showError('Erreur de connexion');
+      EasyLoading.dismiss();
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getUserInfo();
+  }
+
   @override
   Widget build(BuildContext context) {
     if (global.isloggedin) {
@@ -68,13 +104,17 @@ class _accountState extends State<account> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
-                              "Les informations personnels",
-                              style: TextStyle(
-                                  color: HexColor("#069A8E"),
-                                  fontSize: 26,
-                                  fontWeight: FontWeight.bold),
+                            Flexible(
+                              child: Text(
+                                "Les informations personnels",
+                                style: TextStyle(
+                                    color: HexColor("#069A8E"),
+                                    fontSize: 26,
+                                    fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.center,
+                              ),
                             ),
                           ],
                         ),
@@ -91,11 +131,13 @@ class _accountState extends State<account> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            Text(
-                              "${global.infouser[0]['Nom']}",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                            Flexible(
+                              child: Text(
+                                "${global.infouser[0]['Nom']}",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ],
@@ -113,11 +155,13 @@ class _accountState extends State<account> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            Text(
-                              "${global.infouser[0]['Prenom']}",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                            Flexible(
+                              child: Text(
+                                "${global.infouser[0]['Prenom']}",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ],
@@ -135,11 +179,13 @@ class _accountState extends State<account> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            Text(
-                              "${global.infouser[0]['numerotel']}",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                            Flexible(
+                              child: Text(
+                                "${global.infouser[0]['numerotel']}",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ],
@@ -157,11 +203,13 @@ class _accountState extends State<account> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            Text(
-                              "${global.infouser[0]['Email']}",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                            Flexible(
+                              child: Text(
+                                "${global.infouser[0]['Email']}",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ],
@@ -199,7 +247,7 @@ class _accountState extends State<account> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     SizedBox(
-                      width: 150,
+                      width: 130,
                       child: ElevatedButton(
                         onPressed: () {
                           setState(() {
@@ -214,19 +262,20 @@ class _accountState extends State<account> {
                         },
                         child: const Text(
                           "Modifier",
-                          style: TextStyle(fontSize: 25),
+                          style: TextStyle(fontSize: 20),
                         ),
                         style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.all(10)),
                       ),
                     ),
                     SizedBox(
-                      width: 150,
+                      width: 130,
                       child: ElevatedButton(
                         onPressed: () {
                           setState(() {
                             global.isloggedin = false;
                             global.infouser = [];
+                            global.userID = -1;
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (BuildContext context) {
@@ -238,7 +287,7 @@ class _accountState extends State<account> {
                         },
                         child: const Text(
                           "Déconecter",
-                          style: TextStyle(fontSize: 25),
+                          style: TextStyle(fontSize: 20),
                         ),
                         style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.all(10)),
