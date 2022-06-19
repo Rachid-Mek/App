@@ -50,7 +50,7 @@ class _shoppingcartState extends State<shoppingcart> {
     for (var elemnt in global.shoppinglist) {
       trouve = false;
       while (i < ids.length && trouve == false) {
-        ids[i] == elemnt.idpharm ? trouve == true : trouve == false;
+        ids[i] == elemnt.idpharm ? trouve = true : trouve = false;
         i = i + 1;
       }
       if (trouve == false) {
@@ -59,26 +59,44 @@ class _shoppingcartState extends State<shoppingcart> {
     }
     print(ids);
     Future reserver() async {
+      EasyLoading.show(status: 'Résevation en cours...');
       try {
         String username = 'pharmacile.live@gmail.com';
-        String password = 'PFE2022karimRACHID';
+        String password = 'ogmgxnoisarpmref';
         global.shoppinglist.forEach(
           (element) {
-            global.emailmessage = global.emailmessage +
-                "<tr><td> " +
-                "<b> Le Produit</b>: " +
-                element.name.toString().toUpperCase() +
-                " " +
-                element.Miligramme.toString() +
-                " ," +
-                "<b> La Quantité: </b>" +
-                element.QteAchte.toString() +
-                " ," +
-                "<b> Le Prix Total: </b>" +
-                (element.QteAchte * element.price).toString() +
-                "<b> L'email de la pharmacie: </b>" +
-                element.pharmemail.toString() +
-                '</td></tr>';
+            if (element.Miligramme == 0) {
+              global.emailmessage = global.emailmessage +
+                  "<tr><td> " +
+                  "<b> Le Produit</b>: " +
+                  element.name.toString().toUpperCase() +
+                  "<b> La Quantité: </b>" +
+                  element.QteAchte.toString() +
+                  " ," +
+                  "<b> Le Prix Total: </b>" +
+                  (element.QteAchte * element.price).toString() +
+                  " DA" +
+                  "<b> L'email de la pharmacie: </b>" +
+                  element.pharmemail.toString() +
+                  '</td></tr>';
+            } else {
+              global.emailmessage = global.emailmessage +
+                  "<tr><td> " +
+                  "<b> Le Produit</b>: " +
+                  element.name.toString().toUpperCase() +
+                  " " +
+                  element.Miligramme.toString() +
+                  "mg ," +
+                  "<b> La Quantité: </b>" +
+                  element.QteAchte.toString() +
+                  " ," +
+                  "<b> Le Prix Total: </b>" +
+                  (element.QteAchte * element.price).toString() +
+                  " DA" +
+                  "<b> L'email de la pharmacie: </b>" +
+                  element.pharmemail.toString() +
+                  '</td></tr>';
+            }
             //global.emailmessage.add('\n');
           },
         );
@@ -142,10 +160,49 @@ class _shoppingcartState extends State<shoppingcart> {
           }
         }
         if (reserve == true) {
-          EasyLoading.show(status: 'Résevation en cours...');
           final sendReport1 = await send(message1, smtpServer);
-
+          global.emailmessage = "";
           for (var id in ids) {
+            global.emailmessage = "";
+            global.shoppinglist.forEach(
+              (element) {
+                if (element.idpharm == id) {
+                  if (element.Miligramme == 0) {
+                    global.emailmessage = global.emailmessage +
+                        "<tr><td> " +
+                        "<b> Le Produit</b>: " +
+                        element.name.toString().toUpperCase() +
+                        "<b> La Quantité: </b>" +
+                        element.QteAchte.toString() +
+                        " ," +
+                        "<b> Le Prix Total: </b>" +
+                        (element.QteAchte * element.price).toString() +
+                        " DA" +
+                        "<b> L'email de la pharmacie: </b>" +
+                        element.pharmemail.toString() +
+                        '</td></tr>';
+                  } else {
+                    global.emailmessage = global.emailmessage +
+                        "<tr><td> " +
+                        "<b> Le Produit</b>: " +
+                        element.name.toString().toUpperCase() +
+                        " " +
+                        element.Miligramme.toString() +
+                        "mg ," +
+                        "<b> La Quantité: </b>" +
+                        element.QteAchte.toString() +
+                        " ," +
+                        "<b> Le Prix Total: </b>" +
+                        (element.QteAchte * element.price).toString() +
+                        " DA" +
+                        "<b> L'email de la pharmacie: </b>" +
+                        element.pharmemail.toString() +
+                        '</td></tr>';
+                  }
+                }
+                //global.emailmessage.add('\n');
+              },
+            );
             final indexcond = global.shoppinglist
                 .indexWhere((element) => element.idpharm == id);
             print(global.shoppinglist[indexcond].pharmemail);
@@ -172,12 +229,15 @@ class _shoppingcartState extends State<shoppingcart> {
               },
             ),
           );
-          EasyLoading.dismiss();
         }
       } catch (e) {
-        EasyLoading.showError('Erreur, Réservation non enregistré');
-        EasyLoading.dismiss();
+        Fluttertoast.showToast(
+            msg: "Erreur de connexion",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            fontSize: 16);
       }
+      EasyLoading.dismiss();
     }
 
     ;
@@ -250,7 +310,7 @@ class _shoppingcartState extends State<shoppingcart> {
                           Padding(
                             padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                             child: Text(
-                              "${global.prixtotal}",
+                              "${global.prixtotal} DA",
                               style: TextStyle(
                                 fontWeight: FontWeight.w300,
                                 fontSize: 25,
