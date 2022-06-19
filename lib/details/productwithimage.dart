@@ -43,7 +43,7 @@ class ProductTitlewithImage extends StatelessWidget {
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.w600)),
                     TextSpan(
-                        text: "\$${price}",
+                        text: "${price}",
                         style: Theme.of(context).textTheme.headline4?.copyWith(
                             color: Colors.white, fontWeight: FontWeight.bold))
                   ]),
@@ -92,7 +92,7 @@ class ProductTitlewithImage extends StatelessWidget {
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.w600)),
                     TextSpan(
-                        text: "\$${price}",
+                        text: "${price}",
                         style: Theme.of(context).textTheme.headline4?.copyWith(
                             color: Colors.white, fontWeight: FontWeight.bold))
                   ]),
