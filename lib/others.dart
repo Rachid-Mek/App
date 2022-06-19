@@ -74,7 +74,9 @@ class _otherState extends State<other> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "${widget.name} ${widget.mg}",
+                        widget.mg == 0
+                            ? "${widget.name}"
+                            : "${widget.name} ${widget.mg}mg",
                         style: TextStyle(
                           fontWeight: FontWeight.w400,
                           fontSize: 18,
@@ -220,7 +222,7 @@ class _otherState extends State<other> {
                         ),
                       ),
                       Text(
-                        "\$${widget.qteAchete * widget.price}",
+                        "${widget.qteAchete * widget.price}",
                         style: TextStyle(
                           fontWeight: FontWeight.w400,
                           fontSize: 18,
