@@ -79,11 +79,6 @@ class _DetailsState extends State<Details> {
     );
   }
 
-  bool isSearching = false;
-  Widget searchIcon = Image.asset(
-    'images/search.png',
-    color: Colors.white,
-  );
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
       backgroundColor: HexColor("#6EBF8B"),
@@ -103,36 +98,7 @@ class _DetailsState extends State<Details> {
             });
           },
           icon: Image.asset('images/back.png')),
-      title: !isSearching
-          ? Text("")
-          : const TextField(
-              style: TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                  icon: Icon(
-                    Icons.search,
-                    color: Colors.white,
-                  ),
-                  hintText: "Chercher un produit",
-                  hintStyle: TextStyle(color: Colors.white)),
-            ),
       actions: <Widget>[
-        isSearching
-            ? IconButton(
-                onPressed: () {
-                  setState(() {
-                    this.isSearching = false;
-                  });
-                },
-                icon: Icon(Icons.cancel),
-              )
-            : IconButton(
-                onPressed: () {
-                  setState(() {
-                    this.isSearching = true;
-                  });
-                },
-                icon: searchIcon,
-              ),
         IconButton(
           onPressed: () {
             setState(() {
