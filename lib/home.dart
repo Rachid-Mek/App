@@ -196,10 +196,10 @@ class _HomePageState extends State<HomePage> {
                       itemCount: listMedicament.length,
                       // ignore: prefer_const_constructors
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        mainAxisSpacing: 25,
+                        mainAxisSpacing: 5,
                         crossAxisSpacing: 25,
                         crossAxisCount: 2,
-                        childAspectRatio: 0.85,
+                        childAspectRatio: 0.8,
                       ),
                       itemBuilder: (context, index) => ProductCard(
                         name: listMedicament[index]['Nom'],
