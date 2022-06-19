@@ -32,6 +32,7 @@ class AddToCarte extends StatefulWidget {
 }
 
 class _AddToCarteState extends State<AddToCarte> {
+  var indext;
   @override
   Widget build(BuildContext context) {
     if (global.isloggedin) {
@@ -64,28 +65,43 @@ class _AddToCarteState extends State<AddToCarte> {
                 ),
                 onPressed: () {
                   setState(() {
-                    if (widget.Qte > 0) {
-                      global.shoppinglist = global.shoppinglist.toList();
-                      global.shoppinglist.add(
-                        Med(
-                          id: widget.id,
-                          image: widget.image,
-                          name: widget.name,
-                          Miligramme: widget.Miligramme,
-                          Qte: widget.Qte,
-                          price: widget.price,
-                          QteAchte: global.qte,
-                          idpharm: widget.idpharm,
-                          pharmemail: widget.pharmemail,
-                        ),
-                      );
-                      global.qte = 1;
-                      shoppingcart(
-                        shoppinglist: global.shoppinglist,
-                      );
+                    indext = global.shoppinglist
+                        .indexWhere((element) => element.id == widget.id);
+                    if (indext == -1) {
+                      if (widget.Qte > 0) {
+                        global.shoppinglist = global.shoppinglist.toList();
+                        global.shoppinglist.add(
+                          Med(
+                            id: widget.id,
+                            image: widget.image,
+                            name: widget.name,
+                            Miligramme: widget.Miligramme,
+                            Qte: widget.Qte,
+                            price: widget.price,
+                            QteAchte: global.qte,
+                            idpharm: widget.idpharm,
+                            pharmemail: widget.pharmemail,
+                          ),
+                        );
+                        global.qte = 1;
+                        Fluttertoast.showToast(
+                            msg: "Produit ajouté au panier",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.CENTER,
+                            fontSize: 16);
+                        shoppingcart(
+                          shoppinglist: global.shoppinglist,
+                        );
+                      } else {
+                        Fluttertoast.showToast(
+                            msg: "OOPS! Medicament non disponible",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.CENTER,
+                            fontSize: 16);
+                      }
                     } else {
                       Fluttertoast.showToast(
-                          msg: "OOPS! Medicament non disponible",
+                          msg: "Produit existant deja dans le panier",
                           toastLength: Toast.LENGTH_SHORT,
                           gravity: ToastGravity.CENTER,
                           fontSize: 16);
@@ -108,41 +124,51 @@ class _AddToCarteState extends State<AddToCarte> {
                 ),
                 onPressed: () {
                   setState(() {
-                    if (widget.Qte > 0) {
-                      global.shoppinglist = global.shoppinglist.toList();
-                      global.shoppinglist.add(
-                        Med(
-                          id: widget.id,
-                          image: widget.image,
-                          name: widget.name,
-                          Miligramme: widget.Miligramme,
-                          Qte: widget.Qte,
-                          price: widget.price,
-                          QteAchte: global.qte,
-                          idpharm: widget.idpharm,
-                          pharmemail: widget.pharmemail,
-                        ),
-                      );
-                      global.qte = 1;
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (BuildContext context) {
-                            return MainHome(pageindex: 1);
-                          },
-                        ),
-                      );
-                      shoppingcart(
-                        shoppinglist: global.shoppinglist,
-                      );
+                    indext = global.shoppinglist
+                        .indexWhere((element) => element.id == widget.id);
+                    if (indext == -1) {
+                      if (widget.Qte > 0) {
+                        global.shoppinglist = global.shoppinglist.toList();
+                        global.shoppinglist.add(
+                          Med(
+                            id: widget.id,
+                            image: widget.image,
+                            name: widget.name,
+                            Miligramme: widget.Miligramme,
+                            Qte: widget.Qte,
+                            price: widget.price,
+                            QteAchte: global.qte,
+                            idpharm: widget.idpharm,
+                            pharmemail: widget.pharmemail,
+                          ),
+                        );
+                        global.qte = 1;
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (BuildContext context) {
+                              return MainHome(pageindex: 1);
+                            },
+                          ),
+                        );
+                        shoppingcart(
+                          shoppinglist: global.shoppinglist,
+                        );
+                      } else {
+                        showAlertDialog(
+                            context,
+                            widget.idpharm,
+                            widget.id,
+                            widget.name,
+                            widget.Miligramme,
+                            widget.price,
+                            widget.pharmemail);
+                      }
                     } else {
-                      showAlertDialog(
-                          context,
-                          widget.idpharm,
-                          widget.id,
-                          widget.name,
-                          widget.Miligramme,
-                          widget.price,
-                          widget.pharmemail);
+                      Fluttertoast.showToast(
+                          msg: "Produit existant deja dans le panier",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.CENTER,
+                          fontSize: 16);
                     }
                   });
                 },
@@ -244,11 +270,18 @@ showAlertDialog(BuildContext context, int idpharm, int idmed, String nom,
   Future Reservernondispo() async {
     try {
       String username = 'pharmacile.live@gmail.com';
-      String password = 'PFE2022karimRACHID';
+      String password = 'ogmgxnoisarpmref';
 
       int prixtotal = int.parse(QteReserve.text) * prix;
       String message =
-          "$nom $milli mg, le prix total: $prixtotal\nL'email de la pharmacie: $emailpharm";
+          "$nom $milli mg, le prix total: $prixtotal DA\nL'email de la pharmacie: $emailpharm";
+      if (milli == 0) {
+        message =
+            "$nom, le prix total: $prixtotal DA\nL'email de la pharmacie: $emailpharm";
+      } else {
+        message =
+            "$nom $milli mg, le prix total: $prixtotal DA\nL'email de la pharmacie: $emailpharm";
+      }
       final smtpServer = gmail(username, password);
       final message1 = Message()
         ..from = Address(username, 'Pharmacile')
@@ -327,7 +360,7 @@ showAlertDialog(BuildContext context, int idpharm, int idmed, String nom,
           builder: (BuildContext context) {
             return AlertDialog(
               scrollable: true,
-              title: Text('Résever'),
+              title: Text('Commander Ce Produit'),
               content: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Form(
@@ -362,7 +395,7 @@ showAlertDialog(BuildContext context, int idpharm, int idmed, String nom,
 
   // set up the AlertDialog
   AlertDialog alert = AlertDialog(
-    title: Text("AlertDialog"),
+    title: Text("Commander Ce Produit"),
     content: Text(
         "Produit non disponible pour le moment. \nVoulez vous placer une commande et être notifier lorsque le medicament est disponible?"),
     actions: [
